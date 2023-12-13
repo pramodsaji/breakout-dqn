@@ -7,6 +7,7 @@ from collections import deque
 from keras.models import model_from_json
 import cv2
 from model import create_model
+import json
 
 # Class to create a DQN agent
 class DQNAgent:
@@ -147,14 +148,19 @@ class DQNAgent:
         self.episodes.append(episode)
         self.epsilons.append(self.epsilon)
         self.average.append(sum(self.scores[-50:]) / len(self.scores[-50:]))
-                    
+        
+        # Create a dictionary with the specified keys
+        data = {
+            "episodes": self.episodes,
+            "rewards": self.rewards,
+            "epsilons": self.epsilons,
+            "scores": self.scores,
+            "averages": self.average
+        }
+
         # Open a file in write mode
-        with open('metrics.txt', 'w') as file:
-            file.write(f"Episodes: {self.episodes}\n")
-            file.write(f"Rewards: {self.rewards}\n")
-            file.write(f"Epsilon: {self.epsilons}\n")
-            file.write(f"Scores: {self.scores}\n")
-            file.write(f"Average: {self.average}\n")
+        with open('metrics.json', 'w') as file:
+            json.dump(data, file)
 
     # Function to preprocess, crop and resize the image
     # frame: current frame of the environment
